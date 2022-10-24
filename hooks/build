@@ -1,2 +1,0 @@
-#!/bin/sh
-docker build --build-arg GITREPO=$GITREPO --build-arg GITREF=$GITREF -t $IMAGE_NAME .
