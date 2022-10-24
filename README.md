@@ -1,11 +1,24 @@
-# Docker image for git-configured bind9
+# ffmd Bind9 Image
 
-Arguments:
-* GITREPO: Git reporistory URI
-* GITREF:  Branch or tag in GITREPO, defaults to `master`
+> Bind9 container image with configuration for the ffmd zone
 
-Build with as
+## Releases
+
+Releases are created automatically based on the version.
+
+**Version tags** follow the serial numbers, e.g. `v2022060801`.
+The serial number will be the tag for the docker image.
+
+## Deploy
+
+### with Docker
+
+```bash
+docker run --rm -it -p 127.0.0.1:53:53/udp ffmd/bind9-ffmd:latest
 ```
-  docker build --build-arg GITREPO=<git uri> --build-arg GITREF=<branch or tag>
-```
+
+### Production
+
+The production image is deployed using [Ansible](https://github.com/FreifunkMD/backend-ffmd) via [backend-ffmd](https://github.com/FreifunkMD/backend-ffmd).
+
 
