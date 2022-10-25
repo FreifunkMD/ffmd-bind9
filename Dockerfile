@@ -7,8 +7,6 @@ RUN DEBIAN_FRONTEND=noninteractive apt-get update && apt-get install -y \
     && rm -rf /var/lib/apt/lists/* \
     && rm -rf /var/cache/apt/*
 
-COPY --from=install /tmp/bind /etc/bind
-
 EXPOSE 53/udp 53/tcp
 
 COPY named.conf.local /etc/bind
