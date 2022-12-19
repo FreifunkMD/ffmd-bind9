@@ -20,5 +20,3 @@ docker run --rm -it -p 127.0.0.1:53:53/udp ffmd/bind9-ffmd:latest
 ### Production
 
 The production image is deployed using [Ansible](https://github.com/FreifunkMD/backend-ffmd) via [backend-ffmd](https://github.com/FreifunkMD/backend-ffmd).
-
-
