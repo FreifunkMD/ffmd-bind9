@@ -1,0 +1,71 @@
+name: Update and Tag DNS Zone Serial
+
+on:
+  workflow_call:
+    inputs:
+      ZONE_FILE:
+        description: "Shell glob for detecting zone files."
+        type: string
+        required: false
+        default: "db.*"
+    outputs:
+      SERIAL:
+        description: "Created zone serial number, if any."
+        value: ${{ jobs.generate-serial.outputs.serial }}
+
+# Make sure only one job at a time is generating a serial number
+concurrency: generate-serial
+
+jobs:
+  generate-serial:
+    name: "Generate DNS Zone Serial"
+    runs-on: ubuntu-latest
+    outputs:
+      SERIAL: ${{ steps.generate-serial.outputs.serial }}
+    steps:
+      - name: "Check-out"
+        uses: actions/checkout@v3
+        with:
+            fetch-depth: 2
+      - name: "Check if zone file has been changed"
+        id: check-for-change
+        run: |
+          zones_changed=$(git diff --name-only HEAD^1 HEAD | grep "${{ inputs.ZONE_FILE }}" | wc -l)
+          if [ "$zones_changed" = 0 ]
+          then
+            echo "::notice::Zone file has not been changed."
+          fi
+          echo "zones_changed=$zones_changed" >> $GITHUB_OUTPUT
+      - name: "Update DNS Zone Serial"
+        id: generate-serial
+        if: steps.check-for-change.outputs.zones_changed > 0
+        run: |
+          current_serial="$(grep -o -P '[0-9]{10}(?= ; serial)' ${{ inputs.ZONE_FILE }})"
+          serial_linenumber="$(grep -n -P '[0-9]{10}(?= ; serial)' ${{ inputs.ZONE_FILE }} | cut -d : -f 1)"
+          current_date="${current_serial:0:8}"
+          current_sequence="${current_serial:8:2}"
+          new_date="$(date +%Y%m%d)"
+          if [ "$current_date" = "$new_date" ]; 
+          then
+          # we use bc and substringing because current serial has leading zeros 
+              new_sequence="$(printf "%02.0f\n" "$( echo ${current_sequence}+1 | bc)")"
+          else
+              new_sequence="01"
+          fi
+          new_serial="$(echo $new_date${new_sequence: -2})"
+          echo "::notice::Created Zone serial $new_serial"
+          echo "serial=$new_serial" >> $GITHUB_OUTPUT
+          sed -i "${serial_linenumber}s/$current_serial/$new_serial/" ${{ inputs.ZONE_FILE }}
+      - name: "Add and Commit"
+        uses: EndBug/add-and-commit@v9
+        if: steps.generate-serial.outputs.serial
+        with:
+          # The arguments for the `git add` command (see the paragraph below for more info)
+          # Default: '.'
+          add: "${{ inputs.ZONE_FILE }}"
+          # The message for the commit.
+          # Default: 'Commit from GitHub Actions (name of the workflow)'
+          message: 'Update Zone Serial number'
+          # Arguments for the git tag command (the tag name always needs to be the first word not preceded by an hyphen)
+          # Default: ''
+          tag: "v${{ steps.generate-serial.outputs.serial }}"
