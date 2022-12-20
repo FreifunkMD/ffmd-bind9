@@ -27,6 +27,7 @@ jobs:
         uses: actions/checkout@v3
         with:
             fetch-depth: 2
+
       - name: "Check if zone file has been changed"
         id: check-for-change
         run: |
@@ -36,6 +37,7 @@ jobs:
             echo "::notice::Zone file has not been changed."
           fi
           echo "zones_changed=$zones_changed" >> $GITHUB_OUTPUT
+
       - name: "Update DNS Zone Serial"
         id: generate-serial
         if: steps.check-for-change.outputs.zones_changed > 0
@@ -56,6 +58,7 @@ jobs:
           echo "::notice::Created Zone serial $new_serial"
           echo "serial=$new_serial" >> $GITHUB_OUTPUT
           sed -i "${serial_linenumber}s/$current_serial/$new_serial/" ${{ inputs.ZONE_FILE }}
+
       - name: "Add and Commit"
         uses: EndBug/add-and-commit@v9
         if: steps.generate-serial.outputs.serial

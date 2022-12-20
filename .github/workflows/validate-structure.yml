@@ -14,6 +14,7 @@ jobs:
     steps:
       - name: "Check-out"
         uses: actions/checkout@v3
+
       - name: "Pre-Check"
         run: |
           num_zonefiles="$(ls  ${{ env.ZONE_FILE }} | wc -l)"

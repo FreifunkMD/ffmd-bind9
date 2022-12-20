@@ -11,8 +11,8 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Check out code
-      uses: actions/checkout@v3
+      - name: Check out code
+        uses: actions/checkout@v3
 
-    - name: Run named-checkzone
-      uses: grramos/action-named-checkzone@v1.0.1
+      - name: Run named-checkzone
+        uses: grramos/action-named-checkzone@v1.0.1
