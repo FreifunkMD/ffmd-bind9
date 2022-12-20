@@ -10,6 +10,6 @@ RUN DEBIAN_FRONTEND=noninteractive apt-get update && apt-get install -y \
 EXPOSE 53/udp 53/tcp
 
 COPY named.conf.local /etc/bind
-COPY db.ffmd /etc/bind
+COPY db.* /etc/bind
 
 CMD ["/usr/sbin/named", "-f", "-g"]
