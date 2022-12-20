@@ -8,5 +8,5 @@
 
 zone "ffmd" IN {
     type master;
-    file "/etc/bind/ffmd.zone";
+    file "/etc/bind/db.ffmd";
 };
