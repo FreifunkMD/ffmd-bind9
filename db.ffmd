@@ -26,6 +26,8 @@ stable-babel.updates.firmware       AAAA    fda9:26e:5805::9
 experimental-babel.updates.firmware AAAA    fda9:26e:5805::9
 test-babel.updates.firmware         AAAA    fda9:26e:5805::9
 ;
+web                                 AAAA    fda9:26e:5805:bab1:aaaa::0
+gw1
 gw2                                 AAAA    fda9:26e:5805::2
 gw01.babel                          AAAA    fda9:26e:5805:bab1:aaaa::1
 gw02.babel                          AAAA    fda9:26e:5805:bab1:aaaa::2
