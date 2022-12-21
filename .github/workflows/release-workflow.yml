@@ -1,0 +1,46 @@
+name: Release Workflow
+
+on:
+  push:
+    branches:
+      - 'master'
+
+
+jobs:
+  validate-structure:
+    name: "Validate repository structure"
+    uses: ./.github/workflows/validate-structure.yml
+
+  validate-zone:
+    name: "Validate zone syntax"
+    uses: ./.github/workflows/validate-zone.yml
+
+  update-serial:
+    name: "Update serial number"
+    if: github.repository_owner == 'FreifunkMD'
+    needs:
+      - validate-structure
+      - validate-zone
+    uses: ./.github/workflows/update-serial.yml
+
+  build-image:
+    name: "Build Docker image"
+    needs:
+      - update-serial
+    if: needs.update-serial.outputs.serial
+    uses: ./.github/workflows/docker-image.yml
+    with:
+      IMAGE: ffmd/bind9-ffmd
+      SERIAL: ${{ needs.update-serial.outputs.serial }}
+      PUSH: true
+    secrets: inherit
+
+  release:
+    name: "Create release"
+    needs:
+      - update-serial
+      - build-image
+    if: needs.update-serial.outputs.serial
+    uses: ./.github/workflows/create-github-release.yml
+    with:
+      SERIAL: ${{ needs.update-serial.outputs.serial }}
