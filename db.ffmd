@@ -1,7 +1,7 @@
 $ORIGIN ffmd.
 $TTL 86400
 @	SOA	ns1.ffmdnic.ffmd.	abuse.md.freifunk.net. (
-        2019110102 ; serial
+        2022122201 ; serial
         21600      ; refresh after 6 hours
         3600       ; retry after 1 hour
         604800     ; expire after 1 week
